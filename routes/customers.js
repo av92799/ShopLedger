@@ -16,7 +16,7 @@ router.post('/customers/:id/settle', function (req, res) {
   var db = store.read();
   var body = req.body || {};
 
-  // Pass amount directly from request payload
+  // The ledger validates and normalizes numeric form input before any writes.
   var result = ledger.recordSettlement(
     db,
     req.params.id,
@@ -32,7 +32,7 @@ router.post('/customers/:id/settle', function (req, res) {
   store.appendAudit(
     db,
     'KHATA_SETTLEMENT',
-    result.customer.name + ' settled ₹' + body.amount + ' via ' + (body.mode || 'upi').toUpperCase()
+    result.customer.name + ' settled ₹' + result.settlement.amount + ' via ' + (body.mode || 'upi').toUpperCase()
   );
   store.write(db);
 
